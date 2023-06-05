@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { privacy } from '../middlewares/auth.js';
 import ProductsManager from '../dao/mongo/Managers/products.js';
 import productModel from '../dao/mongo/models/product.js';
 import cartsManager from '../dao/mongo/Managers/carts.js';
@@ -20,7 +21,7 @@ viewsRouter.get('/chat',async(req,res)=>{
     res.render('chat');
 })
 
-viewsRouter.get('/products',async(req,res)=>{
+viewsRouter.get('/products',privacy('PRIVATE'),async(req,res)=>{
     const { page = 1 } = req.query;
     const limit = 10;
     const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, ...rest} = await productService.getProducts( limit, page );
@@ -33,11 +34,11 @@ viewsRouter.get('/carts/:cid',async(req,res)=>{
     res.render('carts', { products: cart.products, id: cart._id });
 })
 
-viewsRouter.get('/register',async(req,res)=>{
+viewsRouter.get('/register',privacy('NO_AUTHENTICATED'),async(req,res)=>{
     res.render('register');
 })
 
-viewsRouter.get('/login',(req,res)=>{
+viewsRouter.get('/login',privacy('NO_AUTHENTICATED'),(req,res)=>{
     res.render('login')
 })
 
