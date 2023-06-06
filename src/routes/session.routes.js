@@ -1,35 +1,41 @@
 import { Router } from "express";
 import userModel from "../dao/mongo/models/user.js";
+import passport from "passport";
 
 
 const sessionsRouter = Router();
 
-sessionsRouter.post('/register',async(req,res)=>{
-    const result = await userModel.create(req.body);
-    res.send({status:"success",payload:result});
+sessionsRouter.post('/register', passport.authenticate('register', {failureFlash:'/api/sessions/registerFail'}),async(req,res)=>{
+    res.send({status:"success",message:"Registered"});
 })
 
-sessionsRouter.post('/login',async(req,res)=>{
-    const {email, password} = req.body;
+sessionsRouter.get('/registerFail', (req, res) => {
+    console.log(req.session.messages);
+    res.status(400).send({status:"error", error:req.session.messages});
+})
 
-    if(email==="adminCoder@coder.com" && password==="adminCod3r123"){
-        req.session.user = {
-            name: 'Admin',
-            role: 'admin',
-            email: 'adminCoder@coder.com'
-        }
-        return res.sendStatus(200);
-    }
-
-    const user = await userModel.findOne({email,password});
-    if(!user) return res.status(400).send({status:"error",error:"Usuario o contraseña incorrectas"});
+sessionsRouter.post('/login',passport.authenticate('login', {failureFlash:'/api/sessions/loginFail'}),async(req,res)=>{
 
     req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email:user.email
+        name: req.user.name,
+        role: req.user.role,
+        id: req.user.id,
+        email: req.user.email
     }
+     
+    res.send({status:"success",message:"Login"});
+ 
+})
 
+sessionsRouter.get('/loginFail', (req, res) => {
+    console.log(req.session.messages);
+    res.status(400).send({status:"error", error:req.session.messages});
+})
+
+sessionsRouter.get('/logout',async (req, res) => {
+    req.session.destroy()
     res.sendStatus(200);
 })
+
 
 export default sessionsRouter;

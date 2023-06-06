@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 import { Server } from 'socket.io';
 import session from 'express-session';
+import passport from 'passport';
 
 import productsRouter from './routes/products.routes.js';
 import cartsRouter from './routes/carts.routes.js';
@@ -14,6 +15,7 @@ import sessionsRouter from './routes/session.routes.js';
 import registerChatHandler from "./listeners/chatHandler.js";
 import registerProductsHandler from './listeners/productsHandler.js';
 import registerCartsHandler from './listeners/cartsHandler.js';;
+import initializePassport from './config/passport.config.js';
 import __dirname from './utils.js';
 
 const app = express();
@@ -38,6 +40,8 @@ app.use(session({
     resave:false,
     saveUninitialized:false
 }))
+app.use(passport.initialize());
+initializePassport();
 app.use(morgan("dev"));
 
 app.use('/', viewsRouter);
