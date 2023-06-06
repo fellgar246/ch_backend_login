@@ -33,8 +33,14 @@ sessionsRouter.get('/loginFail', (req, res) => {
 })
 
 sessionsRouter.get('/logout',async (req, res) => {
-    req.session.destroy()
-    res.sendStatus(200);
+    req.session.destroy((err) => {
+        if (err) {
+          console.error('Error al destruir la sesión:', err);
+        } else {
+          res.clearCookie('connect.sid');
+        }
+      });   
+    res.send({status:"success",message:"Logout"});
 })
 
 

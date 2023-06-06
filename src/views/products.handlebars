@@ -1,12 +1,12 @@
-{{!-- boton para agregar el carrito --}}
 
 <div>
     <div>
         <h1>Hola, {{user.name}}</h1>
         <p>Correo: {{user.email}}</p>
+        <button id="logoutButton" >Cerrar Sesión</button>
     </div>
     <h1>Welcome</h1>
-    <h2>List of products con boton para borrar</h2>
+    <h2>List of products para agregar</h2>
     <a href="/carts/6471391c122af8c6505d1374"><button>Go to my Cart</button></a>
     <ul id="products">
         {{#each products}}
